@@ -8,13 +8,10 @@ import(
 	"strings"
 	"github.com/AbelardoCuesta/twitterGo/awsgo"
 	"github.com/AbelardoCuesta/twitterGo/models"
+	"github.com/AbelardoCuesta/twitterGo/bd"
 )
-func main()  {
-	lambda.Start(EjecutoLambda)
-}
 
-func EjecutoLambda(ctx context.Context, request events.APIGatewayProxyRequest)(*events.APIGatewayProxyResponse, error){
-	var res *events.APIGatewayProxyResponse
+func EjecutoLambda(ctx context.Context, request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
 
 	var res *events.APIGatewayProxyResponse
 	awsgo.InicializoAWS()
@@ -53,6 +50,32 @@ func EjecutoLambda(ctx context.Context, request events.APIGatewayProxyRequest)(*
 	awsgo.Ctx = context.WithValue(awsgo.Ctx, models.Key("jwtSign"), SecretModel.JWTSign)
 	awsgo.Ctx = context.WithValue(awsgo.Ctx, models.Key("body"), request.Body)
 	awsgo.Ctx = context.WithValue(awsgo.Ctx, models.Key("bucketName"), os.Getenv("BucketName"))
+
+	// Chequeo Conexión a la BD o Conecto la BD
+
+	bd.ConectarBD(awsgo.Ctx)
+
+	respAPI := handlers.Manejadores(awsgo.Ctx, request)
+
+	fmt.Println("Sali de Manejadores")
+	if respAPI.CustomResp == nil {
+		headersResp := map[string]string{
+			"Content-Type": "application/json",
+		}
+		res = &events.APIGatewayProxyResponse{
+			StatusCode: respAPI.Status,
+			Body:       string(respAPI.Message),
+			Headers:    headersResp,
+		}
+		return res, nil
+	} else {
+		return respAPI.CustomResp, nil
+	}
+}
+
+func main()  {
+	lambda.Start(EjecutoLambda)
+}
 
 func ValidoParametros() bool {
 	_, traeParametro := os.LookupEnv("SecretName")
