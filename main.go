@@ -9,6 +9,7 @@ import(
 	"github.com/AbelardoCuesta/twitterGo/awsgo"
 	"github.com/AbelardoCuesta/twitterGo/models"
 	"github.com/AbelardoCuesta/twitterGo/bd"
+	"github.com/AbelardoCuesta/twitterGo/handlers"
 )
 
 func EjecutoLambda(ctx context.Context, request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
