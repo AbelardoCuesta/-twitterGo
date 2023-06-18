@@ -6,6 +6,7 @@ import (
 	"github.com/AbelardoCuesta/twitterGo/models"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/AbelardoCuesta/twitterGo/jwt"
+	"github.com/AbelardoCuesta/twitterGo/routers"
 	//"github.com/AbelardoCuesta/twitterGo/models"
 	//"github.com/AbelardoCuesta/twitterGo/models"
 )
@@ -17,7 +18,7 @@ func Manejadores(ctx context.Context, request events.APIGatewayProxyRequest) mod
 	var r models.RespApi
 	r.Status = 400
 
-	isOk, statusCode, msg, claim := validoAuthorization(ctx, request)
+	isOk, statusCode, msg, _ := validoAuthorization(ctx, request)
 	if !isOk {
 		r.Status = statusCode
 		r.Message = msg
@@ -29,46 +30,10 @@ func Manejadores(ctx context.Context, request events.APIGatewayProxyRequest) mod
 		switch ctx.Value(models.Key("path")).(string) {
 		case "registro": // listo
 			return routers.Registro(ctx)
-		case "login": // listo
-			return routers.Login(ctx)
-		case "tweet": // listo
-			return routers.GraboTweet(ctx, claim)
-		case "altaRelacion": // listo
-			return routers.AltaRelacion(ctx, request, claim)
-		case "subirAvatar": // listo
-			return routers.UploadImage(ctx, "A", request, claim)
-		case "subirBanner": // listo
-			return routers.UploadImage(ctx, "B", request, claim)
+
 		}
-	case "GET":
-		switch ctx.Value(models.Key("path")).(string) {
-		case "verperfil": // listo
-			return routers.VerPerfil(request)
-		case "leoTweets": // listo
-			return routers.LeoTweets(request)
-		case "consultaRelacion": // listo
-			return routers.ConsultaRelacion(request, claim)
-		case "listaUsuarios": // listo
-			return routers.ListaUsuarios(request, claim)
-		case "leoTweetsSeguidores": // listo
-			return routers.LeoTweetsSeguidores(request, claim)
-		case "obtenerAvatar": // listo
-			return routers.ObtenerImagen(ctx, "A", request, claim)
-		case "obtenerBanner": // listo
-			return routers.ObtenerImagen(ctx, "B", request, claim)
-		}
-	case "PUT":
-		switch ctx.Value(models.Key("path")).(string) {
-		case "modificarPerfil": // listo
-			return routers.ModificarPerfil(ctx, claim)
-		}
-	case "DELETE":
-		switch ctx.Value(models.Key("path")).(string) {
-		case "eliminarTweet": // listo
-			return routers.EliminarTweet(request, claim)
-		case "bajaRelacion": // listo
-			return routers.BajaRelacion(request, claim)
-		}
+
+
 	}
 
 	r.Status = 400
