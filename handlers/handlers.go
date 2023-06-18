@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/AbelardoCuesta/twitterGo/models"
 	"github.com/aws/aws-lambda-go/events"
+	"github.com/AbelardoCuesta/twitterGo/jwt"
 	//"github.com/AbelardoCuesta/twitterGo/models"
 	//"github.com/AbelardoCuesta/twitterGo/models"
 )
