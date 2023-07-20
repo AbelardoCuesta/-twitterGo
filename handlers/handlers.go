@@ -30,6 +30,8 @@ func Manejadores(ctx context.Context, request events.APIGatewayProxyRequest) mod
 		switch ctx.Value(models.Key("path")).(string) {
 		case "registro": // listo
 			return routers.Registro(ctx)
+		case "login": // listo
+			return routers.Login(ctx)
 
 		}
 
